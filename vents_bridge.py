@@ -757,7 +757,11 @@ def getStructure(CLIENT_ID, CLIENT_SECRET, API_ROOT, house_id):
             
         log.info("Authenticated for %ds" % (client.expires_in))
         
-        return client.get("structures", id=house_id), time.time() + client.expires_in   #structure for our house id, time authentication expires
+        structures = client.get("structures", id=house_id)
+        if house_id == None:
+            structures = structures[0]
+        return structures, time.time() + client.expires_in   #structure for our house id, time authentication expires
+
     except ApiError as e:
         log.error(e.status_code)
         log.error(e.json)
@@ -1124,7 +1128,7 @@ def main():
         house_id = arg.house_id
         values['CLIENT_ID'] = arg.client_id
         values['CLIENT_SECRET'] = arg.client_secret
-        if values['CLIENT_ID'] is None or values['CLIENT_SECRET'] is None or house_id is None:
+        if values['CLIENT_ID'] is None or values['CLIENT_SECRET'] is None:
             log.critical("You must enter your house_id, API CLIENT ID and CLIENT SECRET to access the flair API - get them from hello@flair.co")
             sys.exit(1)
         
