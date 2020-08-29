@@ -1043,7 +1043,7 @@ def on_message(mosq, obj, msg):
         if command == 'percent_open':
             updateVent(structure, device, int(value))
 
-def on_connect(mosq, obj, rc):
+def on_connect(mosq, obj, flags, rc):
     global mqttc
     #log.info("rc: %s" % str(rc))
     mqttc.subscribe(pub_topic +"/flair/command/#", 0) #eg openhab/sensors/flair/command/puck/
