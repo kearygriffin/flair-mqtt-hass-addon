@@ -35,12 +35,16 @@ You will also need to know your house_id - this is a number (usually 4 digits) i
 In the Flair web page showing your devices, it's usually the number at the end of the URL.
 eg https://my.flair.co/h/1234 where 1234 is your house id.
 
+If house_id is not specified on the command line, the first house found in your account will be used.
+
 ## Dependencies
 The Flair python API client module is required. You can install it by following the instructions here:
 https://github.com/flair-systems/flair-api-client-py
 This works with Python 2.7 (despite what it says).
 
 you will also need the paho-mqtt python library, you can get it by following the instructions here: https://www.eclipse.org/paho/clients/python/
+
+python-slugify is used as well, and can be installed w/pip install python-slugify
 
 ## Install
 First you need python 2.7 installed. **This program will not work with Python 3.x without some work**
@@ -85,7 +89,10 @@ optional arguments:
                         mqtt broker password. (default=None)
   -m TOPIC, --topic TOPIC
                         topic to publish sensor data to.
-                        (default=openhab/sensors)
+                        (default=openhab/sensors/flair)
+  -H TOPIC, --ha TOPIC
+                        topic to publish sensor Home Assistant configuration to.  For default homeassistant MQTT auto-discovery,
+                        use --ha homeassistant
   -l LOG, --log LOG     main log file. (default=~/Scripts/flair_vents.log)
   -C, --config          use config File
   -D, --debug           debug mode
@@ -168,7 +175,7 @@ MQTT broker username. This is configured on the broker, and may not be used. If 
 ### PASSWORD
 MQTT broker password, to be used un conjunction with the username. If not used leave as is (None) and no authentication will be used
 ### TOPIC
-MQTT topic to publish data to. this is the stub, the data will be published to the `stub/type/name/value_name` where type is `puck` or `vent`, name is the device name, and `value_name` is `percent_open` and so on. This is also the stub for sending command to the vents/pucks. you publish a command to `stub/flair/command/type/name/value_name` to update a setting.
+MQTT topic to publish data to. this is the stub, the data will be published to the `stub/type/name/value_name` where type is `puck` or `vent`, name is the device name, and `value_name` is `percent_open` and so on. This is also the stub for sending command to the vents/pucks. you publish a command to `stub/command/type/name/value_name` to update a setting.
 Current supported items that can be updated:
 * occupied
 * set_temp
@@ -177,7 +184,7 @@ Current supported items that can be updated:
 
 You publish to the vent or puck in question (or in the case of a puck, the room).
 
-For example, publishing to the default topic `openhab/sensors`, here is some output:
+For example, publishing to the default topic `openhab/sensors/flair`, here is some output:
 ```
 ****** Program Started ********
 Authenticating
@@ -415,4 +422,13 @@ true=ON
 false=OFF
 -=Unknown
 NULL=Unknown
+```
+
+## Home Assistant
+To publish Home Assistant auto discovery data to MQTT, use the --ha argument.  For a default homeassistant MQTT installation, the auto discovery topic is homeassistant.
+
+This will publish Temperature, Humidity, and Battery sensors for the pucks, and Temperature, Battery and a Cover device for each vent.
+
+```
+./vents_bridge.py -id <house_id> -cid <CLIENT_ID> -cs <CLIENT_SECRET> -l flair_vents.log --ha homeassistant --topic flair
 ```
