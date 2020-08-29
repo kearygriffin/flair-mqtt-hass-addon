@@ -807,10 +807,10 @@ def PublishVent_data(structure, mqttc=None, name=None):
             if name is None or name == vent.name:
                 log.info("Vent: %s, Latest Reading: %s" % (vent.name, json.dumps(vent_data[vent.name], indent=2, sort_keys=True)))
                 if mqttc is not None:
-                    mqttc.publish('%s/flair/vent/%s/LastUpdate' % (pub_topic,vent.name), "%s" % time.ctime())
+                    mqttc.publish('%s/flair/vent/%s/LastUpdate' % (pub_topic,vent.name), "%s" % time.ctime(), qos=0, retain=True)
                     for data, value in vent_data[vent.name].items():
                         if value is not None:
-                            mqttc.publish('%s/flair/vent/%s/%s' % (pub_topic,vent.name,data), value)
+                            mqttc.publish('%s/flair/vent/%s/%s' % (pub_topic,vent.name,data), value, qos=0, retain=True)
                 else:
                     log.info("Data NOT published")
             
@@ -868,10 +868,10 @@ def PublishPuck_data(structure, mqttc=None, name=None):
             if name is None or name == puck.name:
                 log.info("Puck: %s, Latest Reading: %s" % (puck.name, json.dumps(puck_data[puck.name], indent=2, sort_keys=True)))
                 if mqttc is not None:
-                    mqttc.publish('%s/flair/puck/%s/LastUpdate' % (pub_topic,puck.name), "%s" % time.ctime())
+                    mqttc.publish('%s/flair/puck/%s/LastUpdate' % (pub_topic,puck.name), "%s" % time.ctime(), qos=0, retain=True)
                     for data, value in puck_data[puck.name].items():
                         if value is not None:
-                            mqttc.publish('%s/flair/puck/%s/%s' % (pub_topic,puck.name,data), value)
+                            mqttc.publish('%s/flair/puck/%s/%s' % (pub_topic,puck.name,data), value, qos=0, retain=True)
                 else:
                     log.info("Data NOT published")
         
@@ -1193,28 +1193,28 @@ def main():
                 if structure is not None:
                     PublishVent_data(structure, mqttc)                  
                     PublishPuck_data(structure, mqttc)               
-                    mqttc.publish(pub_topic+"/flair/LastUpdate", "%s" % time.ctime())
+                    mqttc.publish(pub_topic+"/flair/LastUpdate", "%s" % time.ctime(), qos=0, retain=True)
             
             except ApiError as e:
                 log.error(e.status_code)
                 log.error(e.json)
                 log.exception(e)
-                mqttc.publish(pub_topic+"/flair/LastUpdate", "API Error Updating at: %s" % time.ctime())
+                mqttc.publish(pub_topic+"/flair/LastUpdate", "API Error Updating at: %s" % time.ctime(), qos=0, retain=True)
         
             except ConnectionError as e:    #requests.exceptions.ConnectionError
                 log.exception(e)
-                mqttc.publish(pub_topic+"/flair/LastUpdate", "Connection Error Updating at: %s" % time.ctime())
+                mqttc.publish(pub_topic+"/flair/LastUpdate", "Connection Error Updating at: %s" % time.ctime(), qos=0, retain=True)
                 
             except Exception as e:    #all other exceptions
                 log.exception(e)
-                mqttc.publish(pub_topic+"/flair/LastUpdate", "Exception Error Updating at: %s" % time.ctime())
+                mqttc.publish(pub_topic+"/flair/LastUpdate", "Exception Error Updating at: %s" % time.ctime(), qos=0, retain=True)
             
             if not forever: counter += 1
             time.sleep(arg.t)
         
     except (KeyboardInterrupt, SystemExit):
         log.info("System exit Received - Exiting program")
-        mqttc.publish(pub_topic+"/flair/LastUpdate", "Program Exit at: %s" % time.ctime())
+        mqttc.publish(pub_topic+"/flair/LastUpdate", "Program Exit at: %s" % time.ctime(), qos=0, retain=True)
         
     finally:
         mqttc.loop_stop()
