@@ -759,7 +759,7 @@ def getStructure(CLIENT_ID, CLIENT_SECRET, API_ROOT, house_id):
         log.info("Authenticated for %ds" % (client.expires_in))
         
         structures = client.get("structures", id=house_id)
-        if house_id == None:
+        if not house_id:
             structures = structures[0]
         return structures, time.time() + client.expires_in   #structure for our house id, time authentication expires
 
