@@ -1,0 +1,29 @@
+{
+  "name": "Flair Vent MQTT add-on",
+  "version": "0.1a",
+  "slug": "flair_mqtt_addon",
+  "description": "Add-on to allow control of Flair vents via MQTT on HA",
+  "url": "https://github.com/kearygriffin/flair-mqtt-hass-addon",
+  "startup": "services",
+  "boot": "auto",
+  "discovery": [ "mqtt" ],
+  "options": { 
+	  "client_id": null, 
+	  "client_secret": null
+  },
+  "schema": { 
+	  "client_id": "str", 
+	  "client_secret": "str",
+	  "mqtt_host": "str?",
+	  "mqtt_port": "int?",
+	  "mqtt_username": "str?",
+	  "mqtt_password": "str?",
+	  "ha_topic": "str?",
+	  "flair_topic": "str?"
+  },
+  "apparmor": true,
+  "hassio_api": true,
+  "services": [ "mqtt:want" ],
+  "stage": "experimental",
+  "arch": ["amd64", "armv7", "armhf", "i386" , "aarch64"]
+}
