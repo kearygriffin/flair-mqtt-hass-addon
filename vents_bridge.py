@@ -698,7 +698,7 @@ def setup_logger(logger_name, log_file, level=logging.DEBUG, console=False):
         formatter = logging.Formatter('[%(levelname)1.1s %(asctime)s] (%(threadName)-10s) %(message)s')
         if log_file is not None:
             fileHandler = logging.handlers.RotatingFileHandler(log_file, mode='a', maxBytes=2000000, backupCount=5)
-        fileHandler.setFormatter(formatter)
+            fileHandler.setFormatter(formatter)
         if console == True:
           streamHandler = logging.StreamHandler()
 
