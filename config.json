@@ -25,5 +25,6 @@
   "hassio_api": true,
   "services": [ "mqtt:want" ],
   "stage": "experimental",
+  "image": "kearygriffin/image-{arch}-flair_mqtt_addon",
   "arch": ["amd64", "armv7", "armhf", "i386" , "aarch64"]
 }
